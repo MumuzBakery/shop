@@ -1,14 +1,30 @@
 const express = require('express');
-
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const app = express();
 
+const postsRoutes = require("./routes/posts")
+
+mongoose.connect("mongodb+srv://admin:mmz-bakery@cluster0.xvcctmy.mongodb.net/node-angular?retryWrites=true&w=majority").then(() => {
+    console.log('Connected to mongo database!');
+}).catch(() => {
+    console.log('Failed to connect!');
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded(
+    {
+        extended: false
+    }
+));
+
 app.use((req, res, next) => {
-    console.log("First middle wawre");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, PUT, OPTIONS");
     next();
 });
 
-app.use((req, res, next) => {
-    res.send('hello from express!');
-});
+app.use("/api/posts", postsRoutes);
 
 module.exports = app;
